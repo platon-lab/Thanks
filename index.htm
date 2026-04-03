@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLATON GAMES 2</title>
+
+    <link rel="icon" href="favicon.png" type="image/png">
+
+    <meta name="description" content="Ігри про персонажів:Тіто,Смартик,Джуніор,Філ,Мілка.">
+    <meta name="keywords" content="Ігра,Гра,Тіто,Смартик,Джуніор,Філ,Мілка,Котики,Собаки,Прикол.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
+        /* Основні стилі */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #240b36, #c31432);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-x: hidden;
+            padding: 20px;
+            user-select: none;
+        }
+
+        /* Екран з Дубаї (на весь екран, фото повністю видно) */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            background-image: url('Dubai.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 10000;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Декоративні кола на фоні */
+        .background-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite linear;
+        }
+
+        .circle:nth-child(1) { width: 300px; height: 300px; left: -50px; top: -50px; }
+        .circle:nth-child(2) { width: 500px; height: 500px; right: -100px; bottom: -100px; }
+        .circle:nth-child(3) { width: 150px; height: 150px; left: 10%; bottom: 20%; background: rgba(255, 0, 150, 0.2); }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            background: linear-gradient(to right, #ff00cc, #333399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 10px 20px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Контейнер для гри */
+        .games-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            width: 100%;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        .game-card {
+            position: relative;
+            width: 320px;
+            height: 450px;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 30px 60px rgba(255, 0, 204, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .game-card a {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Красиві градієнти для карток */
+        .card-1 { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
+        .card-2 { background: linear-gradient(135deg, #4CB8C4, #3CD3AD); }
+        .card-3 { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
+        .card-4 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .card-5 { background: linear-gradient(135deg, #F09819, #EDDE5D); }
+
+        .card-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            width: 90%;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        .game-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .play-text {
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Оверлей для нової секретки */
+        #secret-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: none;
+            background: black;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #secret-text {
+            font-size: 5rem;
+            color: white;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(255,0,0,0.8);
+            text-align: center;
+            padding: 20px;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .game-card { width: 280px; height: 400px; }
+            .card-title { font-size: 1.8rem; }
+            #secret-text { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen"></div>
+
+    <div class="background-circles">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <header class="header">
+        <h1>Дякую що пограли! Наші труди!</h1>
+    </header>
+
+    <main class="games-container" id="main-container">
+        
+        <div class="game-card card-1">
+            <a href="https://platon-lab.github.io/Tito---My-friend/" target="_blank">
+                <div class="card-title">Тіто мій друже</div>
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                    <span class="play-text">ГРАТИ</span>
+                </div>
+            </a>
+        </div>
+     
+        <div class="game-card card-2">
+            <a href="https://platon-lab.github.io/Smartik---My-friend/" target="_blank">
+                <div class="card-title">Смартик мій друже</div>
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                    <span class="play-text">ГРАТИ</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="game-card card-3">
+            <a href="https://platon-lab.github.io/SmartAI/" target="_blank">
+                <div class="card-title">ШІ Смартик</div>
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                    <span class="play-text">ГРАТИ</span>
+                </div>
+            </a>
+        </div>
+      
+        <div class="game-card card-4">
+            <a href="https://platon-lab.github.io/Smart-Tracker/" target="_blank">
+                <div class="card-title">Smart Tracker</div>
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                    <span class="play-text">ГРАТИ</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="game-card card-5">
+            <a href="https://platon-lab.github.io/Junior-Tracking/" target="_blank">
+                <div class="card-title">Junior Tracker</div>
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                    <span class="play-text">ГРАТИ</span>
+                </div>
+            </a>
+        </div>
+
+    </main>  
+
+    <div id="secret-overlay">
+        <div id="secret-text">Не у цей раз :)</div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        const body = document.body;
+        const introScreen = document.getElementById('intro-screen');
+        const overlay = document.getElementById('secret-overlay');
+
+        // Логіка стартового екрану (при кліку зникає)
+        introScreen.addEventListener('click', () => {
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 500);
+        });
+
+        // Логіка пасхалки на 20 кліків
+        body.addEventListener('click', (e) => {
+            // Перевіряємо, чи клік НЕ по картці гри і чи стартовий екран вже зник
+            if (e.target.closest('.game-card') || introScreen.style.display !== 'none') return;
+
+            clickCount++;
+
+            if (clickCount === 20) {
+                // Показуємо пасхалку
+                overlay.style.display = 'flex';
+                
+                // Ховаємо через 3 секунди
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    clickCount = 0; // Скидаємо лічильник
+                }, 3000);
+            }
+        });
+    </script>
+
+</body>
+</html>
