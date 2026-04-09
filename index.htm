@@ -33,7 +33,7 @@
             user-select: none;
         }
 
-        /* Екран з Дубаї (на весь екран, фото повністю видно) */
+        /* Екран з Дубаї */
         #intro-screen {
             position: fixed;
             top: 0;
@@ -137,7 +137,6 @@
             color: white;
         }
 
-        /* Красиві градієнти для карток */
         .card-1 { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
         .card-2 { background: linear-gradient(135deg, #4CB8C4, #3CD3AD); }
         .card-3 { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
@@ -174,23 +173,11 @@
             z-index: 2;
         }
 
-        .game-card:hover .play-overlay {
-            opacity: 1;
-        }
+        .game-card:hover .play-overlay { opacity: 1; }
+        .play-icon { font-size: 4rem; color: white; margin-bottom: 10px; }
+        .play-text { font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
 
-        .play-icon {
-            font-size: 4rem;
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .play-text {
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Оверлей для нової секретки */
+        /* Оверлей для відео */
         #secret-overlay {
             position: fixed;
             top: 0;
@@ -204,29 +191,19 @@
             align-items: center;
         }
 
-        #secret-text {
-            font-size: 5rem;
-            color: white;
-            font-weight: 800;
-            text-shadow: 0 0 20px rgba(255,0,0,0.8);
-            text-align: center;
-            padding: 20px;
+        #secret-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 600px) {
             h1 { font-size: 2.2rem; }
             .game-card { width: 280px; height: 400px; }
             .card-title { font-size: 1.8rem; }
-            #secret-text { font-size: 3rem; }
         }
     </style>
 </head>
@@ -299,7 +276,10 @@
     </main>  
 
     <div id="secret-overlay">
-        <div id="secret-text">Не у цей раз :)</div>
+        <video id="secret-video" playsinline>
+            <source src="End.mp4" type="video/mp4">
+            Ваш браузер не підтримує відео.
+        </video>
     </div>
 
     <script>
@@ -307,8 +287,9 @@
         const body = document.body;
         const introScreen = document.getElementById('intro-screen');
         const overlay = document.getElementById('secret-overlay');
+        const video = document.getElementById('secret-video');
 
-        // Логіка стартового екрану (при кліку зникає)
+        // Логіка стартового екрану
         introScreen.addEventListener('click', () => {
             introScreen.style.opacity = '0';
             setTimeout(() => {
@@ -318,20 +299,20 @@
 
         // Логіка пасхалки на 20 кліків
         body.addEventListener('click', (e) => {
-            // Перевіряємо, чи клік НЕ по картці гри і чи стартовий екран вже зник
             if (e.target.closest('.game-card') || introScreen.style.display !== 'none') return;
 
             clickCount++;
 
             if (clickCount === 20) {
-                // Показуємо пасхалку
                 overlay.style.display = 'flex';
+                video.play().catch(error => {
+                    console.log("Автоплей заблоковано браузером, потрібен клік.");
+                });
                 
-                // Ховаємо через 3 секунди
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    clickCount = 0; // Скидаємо лічильник
-                }, 3000);
+                // Перенаправлення після завершення відео
+                video.onended = () => {
+                    window.location.href = 'https://platon-lab.github.io/Coding/';
+                };
             }
         });
     </script>
